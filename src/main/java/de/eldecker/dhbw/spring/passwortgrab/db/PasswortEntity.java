@@ -2,6 +2,9 @@ package de.eldecker.dhbw.spring.passwortgrab.db;
 
 import static jakarta.persistence.GenerationType.AUTO;
 
+import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -27,24 +30,42 @@ public class PasswortEntity {
 
     private String titel;
 
-    private String nutzername;
-
-    private String passwort;
+    /**
+     * Dieses Attribut wird auf einen JSON-String abgebildet.
+     * Annotation {@code LOB}, damit auf der Datenbank eine
+     * CLOB-Spalte angelegt wird.
+     */
+    @Convert( converter = NutzernamePasswortAttributConverter.class )
+    @Lob
+    private NutzernamePasswort nutzernamePasswort;
 
     private LocalDateTime gueltigBis;
 
     @Lob
     private String kommentar;
-    
-    
+
+
+    public PasswortEntity() {
+    }
+
+    public PasswortEntity( String titel,
+                           NutzernamePasswort nutzernamePasswort,
+                           LocalDateTime gueltigBis,
+                           String kommentar ) {
+
+        this.titel              = titel;
+        this.nutzernamePasswort = nutzernamePasswort;
+        this.gueltigBis         = gueltigBis;
+        this.kommentar          = kommentar;
+    }
 
     public Long getId() {
-        
+
         return id;
     }
 
     public void setId( Long id ) {
-        
+
         this.id = id;
     }
 
@@ -53,54 +74,44 @@ public class PasswortEntity {
     }
 
     public void setTitel( String titel ) {
-        
+
         this.titel = titel;
     }
 
-    public String getNutzername() {
-        
-        return nutzername;
+    public NutzernamePasswort getNutzernamePasswort() {
+
+        return nutzernamePasswort;
     }
 
-    public void setNutzername( String nutzername ) {
-        
-        this.nutzername = nutzername;
-    }
+    public void setNutzernamePasswort( NutzernamePasswort nutzernamePasswort ) {
 
-    public String getPasswort() {
-        
-        return passwort;
-    }
-
-    public void setPasswort( String passwort ) {
-        
-        this.passwort = passwort;
+        this.nutzernamePasswort = nutzernamePasswort;
     }
 
     public LocalDateTime getGueltigBis() {
-        
+
         return gueltigBis;
     }
 
     public void setGueltigBis( LocalDateTime gueltigBis ) {
-        
+
         this.gueltigBis = gueltigBis;
     }
 
     public String getKommentar() {
-        
+
         return kommentar;
     }
 
     public void setKommentar( String kommentar ) {
-        
+
         this.kommentar = kommentar;
     }
 
     @Override
     public String toString() {
-        
-        return "Passwort\"" + titel + "\""; 
+
+        return "Passwort\"" + titel + "\"";
     }
-    
+
 }
