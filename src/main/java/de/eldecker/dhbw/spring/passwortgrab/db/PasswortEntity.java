@@ -25,7 +25,7 @@ public class PasswortEntity {
     @GeneratedValue( strategy = AUTO )
     private Long id;
 
-    private String name;
+    private String titel;
 
     private String nutzername;
 
@@ -35,5 +35,72 @@ public class PasswortEntity {
 
     @Lob
     private String kommentar;
+    
+    
 
+    public Long getId() {
+        
+        return id;
+    }
+
+    public void setId( Long id ) {
+        
+        this.id = id;
+    }
+
+    public String getTitel() {
+        return titel;
+    }
+
+    public void setTitel( String titel ) {
+        
+        this.titel = titel;
+    }
+
+    public String getNutzername() {
+        
+        return nutzername;
+    }
+
+    public void setNutzername( String nutzername ) {
+        
+        this.nutzername = nutzername;
+    }
+
+    public String getPasswort() {
+        
+        return passwort;
+    }
+
+    public void setPasswort( String passwort ) {
+        
+        this.passwort = passwort;
+    }
+
+    public LocalDateTime getGueltigBis() {
+        
+        return gueltigBis;
+    }
+
+    public void setGueltigBis( LocalDateTime gueltigBis ) {
+        
+        this.gueltigBis = gueltigBis;
+    }
+
+    public String getKommentar() {
+        
+        return kommentar;
+    }
+
+    public void setKommentar( String kommentar ) {
+        
+        this.kommentar = kommentar;
+    }
+
+    @Override
+    public String toString() {
+        
+        return "Passwort\"" + titel + "\""; 
+    }
+    
 }
