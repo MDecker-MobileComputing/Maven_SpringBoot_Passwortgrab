@@ -1,6 +1,6 @@
 package de.eldecker.dhbw.spring.passwortgrab.logik;
 
-import static java.time.LocalDateTime.now;
+import static java.time.LocalDate.now;
 
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortEntity;
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortRepo;
@@ -8,7 +8,7 @@ import de.eldecker.dhbw.spring.passwortgrab.db.krypto.AesAlgorithmus;
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
 
 import java.util.List;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.ApplicationArguments;
@@ -55,15 +55,17 @@ public class DemoDatenImporter implements ApplicationRunner {
 
             LOG.info( "Noch keine Passwörter in der Datenbank, importiere Demo-Daten." );
                         
-            NutzernamePasswort np1 = erzeugePasswortNutzername( "admin"        , "geheim-123" );
-            NutzernamePasswort np2 = erzeugePasswortNutzername( "test-nutzer-1", "secret-789" );
+            NutzernamePasswort np1 = erzeugePasswortNutzername( "admin"        , "geheim-123"    );
+            NutzernamePasswort np2 = erzeugePasswortNutzername( "test-nutzer-1", "secret-789"    );
+            NutzernamePasswort np3 = erzeugePasswortNutzername( "herbert"      , "geheim+secret" );
 
             int zaehler = 0;
             
-            PasswortEntity p1 = new PasswortEntity( "Testnutzer für Fileserver 123", np1, erzeugeGueltigBis( 10*24 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
-            PasswortEntity p2 = new PasswortEntity( "Testnutzer für Fileserver 234", np2, erzeugeGueltigBis( 48    ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
+            PasswortEntity p1 = new PasswortEntity( "Testnutzer für Datei-Server F1", np1, erzeugeGueltigBis( 10 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
+            PasswortEntity p2 = new PasswortEntity( "Testnutzer für Web-Server W2"  , np2, erzeugeGueltigBis(  5 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
+            PasswortEntity p3 = new PasswortEntity( "Testnutzer für Mail-Server"    , np3, erzeugeGueltigBis( -3 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
 
-            List<PasswortEntity> passwortListe = List.of( p1, p2 );
+            List<PasswortEntity> passwortListe = List.of( p1, p2, p3 );
             _passwortRepo.saveAll( passwortListe );
 
             final long anzahlPasswoerterNeu = _passwortRepo.count();
@@ -82,15 +84,15 @@ public class DemoDatenImporter implements ApplicationRunner {
     /**
      * Zeitpunkt in Zukunft erzeugen.
      *
-     * @param stundenInZukunft Anzahl Stunden in der Zukunft
+     * @param tageInZukunft Anzahl Tage in der Zukunft.
      *
      * @return Gültigkeitszeitpunkt, der {@code stundenInZukunft}
      *         Stunden in der Zukunft liegt; auf volle Sekunden
      *         gerundet.
      */
-    private LocalDateTime erzeugeGueltigBis( int stundenInZukunft ) {
+    private LocalDate erzeugeGueltigBis( int tageInZukunft ) {
 
-        return now().plusHours( stundenInZukunft ).withNano( 0 );
+        return now().plusDays( tageInZukunft );
     }
 
 }

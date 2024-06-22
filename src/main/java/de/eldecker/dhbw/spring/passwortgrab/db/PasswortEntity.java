@@ -1,7 +1,9 @@
 package de.eldecker.dhbw.spring.passwortgrab.db;
 
 import static jakarta.persistence.GenerationType.AUTO;
-import static java.time.LocalDateTime.now;
+import static java.time.LocalDate.now;
+
+import java.time.LocalDate;
 
 import de.eldecker.dhbw.spring.passwortgrab.db.krypto.NutzernamePasswortAttributConverter;
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
@@ -13,8 +15,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
-
-import java.time.LocalDateTime;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -47,8 +47,8 @@ public class PasswortEntity {
     @Lob
     private NutzernamePasswort nutzernamePasswort;
 
-    /** Letzter Zeitpunkt, zu dem Passwort noch gültig ist. */
-    private LocalDateTime gueltigBis;
+    /** Letzter Tag, an dem das Passwort noch gültig ist. */
+    private LocalDate gueltigBis;
 
     /** Kommentar (optional) */
     @Lob
@@ -58,8 +58,8 @@ public class PasswortEntity {
     /**
      * Default-Konstruktor für JPA.
      */
-    public PasswortEntity() {
-    }
+    public PasswortEntity() {}
+    
 
     /**
      * Konstruktor für die Erzeugung eines neuen Passworts
@@ -67,7 +67,7 @@ public class PasswortEntity {
      */
     public PasswortEntity( String             titel,
                            NutzernamePasswort nutzernamePasswort,
-                           LocalDateTime      gueltigBis,
+                           LocalDate          gueltigBis,
                            String             kommentar ) {
 
         this.titel              = titel;
@@ -100,12 +100,12 @@ public class PasswortEntity {
         this.nutzernamePasswort = nutzernamePasswort;
     }
 
-    public LocalDateTime getGueltigBis() {
+    public LocalDate getGueltigBis() {
 
         return gueltigBis;
     }
 
-    public void setGueltigBis( LocalDateTime gueltigBis ) {
+    public void setGueltigBis( LocalDate gueltigBis ) {
 
         this.gueltigBis = gueltigBis;
     }
@@ -122,7 +122,9 @@ public class PasswortEntity {
 
     
     /**
-     * Hilfsmethode: Gibt zurück, ob das Passwort abgelaufen ist.
+     * Hilfsmethode: Gibt zurück, ob das Passwort abgelaufen ist,
+     * also ob {@code gueltigBis} ein Datum ist, das in der
+     * Vergangenheit liegt 
      * 
      * @return {@code true} wenn das Passwort abgelaufen ist, 
      *         sonst {@code false}.
