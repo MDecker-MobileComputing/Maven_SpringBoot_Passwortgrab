@@ -4,7 +4,7 @@
     <title>Passwortgrab: Details von Passwort</title>
     <meta charset="utf-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../../passwortgrab_stil.css">
+    <link rel="stylesheet" type="text/css" href="../../passwortgrab_stil.css">  
 </head>
 <body>
 
@@ -13,29 +13,34 @@
         "<span th:text="${passwortObjekt.titel}"></span>"
     </h1>
 
-    <p>
-        <span class="fett">Nutzername: </span>
-        <input type="text" th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}">
-    </p>
-    <p>
-        <span class="fett">Passwort: </span>
-        <input id="id-passwort" type="text" th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
-    </p>
-    <br>
-
-    <p>
-        <span class="fett">Gültig bis: </span>
-        <span th:text="${#temporals.format(passwortObjekt.getGueltigBis(), 'dd. MMMM yyyy (EE), HH:mm')} + ' Uhr'"></span>
-        <span th:if="${passwortObjekt.istAbgelaufen()}" class="fett"> – Passwort ist abgelaufen!</span>    
-    </p>
-
-    <p>
-        <span class="fett">Kommentar: </span>
-        <span th:text="${passwortObjekt.kommentar}"></span>
-    </p>
-    <br><br>
-    
+    <table>
+        <tr>
+            <td class="fett">Nutzername: </td>
+            <td><input class="schrift_monospace" type="text" th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}"></td>
+        </tr>
+        <tr>
+            <td class="fett">Passwort: </td>
+            <td>
+                <input id="id-passwort" class="schrift_monospace" type="password" th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
+                <button id="id-toggleButton">Sichtbarkeit umschalten</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="fett">Gültig bis: </td>
+            <td>
+                <span th:text="${#temporals.format(passwortObjekt.getGueltigBis(), 'dd. MMMM yyyy (EE), HH:mm')} + ' Uhr'"></span>
+                <span th:if="${passwortObjekt.istAbgelaufen()}" class="fett"> – Passwort ist abgelaufen!</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="fett">Kommentar: </td>
+            <td><span th:text="${passwortObjekt.kommentar}"></span></td>
+        </tr>
+    </table>
+    <br><br>    
 
     <a href="/app/passwort-liste">Zurück zur Liste</a>
+
+    <script src="/passwortgrab.js"></script>
 
 </body>

@@ -18,3 +18,11 @@ ul li {
 .fett {
     font-weight: bold;
 }
+
+td {
+    padding: .7em;
+}
+
+.schrift_monospace {
+    font-family: monospace;
+}
