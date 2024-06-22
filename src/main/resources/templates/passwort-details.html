@@ -16,7 +16,11 @@
     <table>
         <tr>
             <td class="fett">Nutzername: </td>
-            <td><input class="schrift_monospace" type="text" th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}"></td>
+            <td>
+                <input id="id-nutzername" class="schrift_monospace" type="text" th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}">
+                &nbsp;
+                <button id="id-nutzername-zu-passwort">In Zwischenablage kopieren</button>
+            </td>
         </tr>
         <tr>
             <td class="fett">Passwort: </td>
@@ -24,6 +28,8 @@
                 <input id="id-passwort" class="schrift_monospace" type="password" th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
                 &nbsp;
                 <button id="id-toggleButton">Sichtbarkeit umschalten</button>
+                &nbsp;
+                <button id="id-passwort-zu-clipboard">In Zwischenablage kopieren</button>
             </td>
         </tr>
         <tr>

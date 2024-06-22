@@ -1,27 +1,44 @@
 "use strict";
 
-
-let passwordInput = null;
+let nutzernameInput = null;
+let passwortInput = null;
 
 /**
  * Event-Handler-Funktion für Klick auf Button "Sichtbarkeit umschalten".
  */
 function togglePasswortSichtbarkeit() {
 
-    if (! passwortInput ) {
 
-        console.error( "Input-Element mit ID 'id-passwort' nicht gefunden" );
-        return;
-    }
+    if ( passwortInput.type === "password" ) {
 
-    if ( passwordInput.type === "password" ) {
-
-        passwordInput.type = "text";
+        passwortInput.type = "text";
 
     } else {
 
-        passwordInput.type = "password";
+        passwortInput.type = "password";
     }
+}
+
+
+/**
+ * Event-Handler für Button "In Zwischenablage kopieren" für Nutzername.
+ */
+function kopierenNutzernameInZwischenablage() {
+
+    nutzernameInput.select();
+    navigator.clipboard.writeText( nutzernameInput.value );
+    console.log( "Nutzername in Zwischenablage kopiert" );
+}
+
+
+/**
+ * Event-Handler für Button "In Zwischenablage kopieren" für Passwort.
+ */
+function kopierePasswortInZwischenablage() {
+
+    passwortInput.select();
+    navigator.clipboard.writeText( passwortInput.value );
+    console.log( "Passwort in Zwischenablage kopiert" );
 }
 
 
@@ -30,8 +47,8 @@ function togglePasswortSichtbarkeit() {
  */
 document.addEventListener( "DOMContentLoaded", function() {    
 
-    passwordInput = document.getElementById( "id-passwort" );
-    if ( !passwordInput ) {
+    passwortInput = document.getElementById( "id-passwort" );
+    if ( !passwortInput ) {
 
         console.error( "Input-Element mit ID 'id-passwort' nicht gefunden" );
         return;
@@ -45,6 +62,28 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
 
     toggleButton.addEventListener( "click", togglePasswortSichtbarkeit );
+    
+    const passwortToClipboardButton = document.getElementById( "id-passwort-zu-clipboard" );
+    if ( !passwortToClipboardButton ) {
+
+        console.error( "Button-Element mit ID 'id-passwort-zu-clipboard' nicht gefunden" );
+        return;
+    }
+    passwortToClipboardButton.addEventListener( "click", kopierePasswortInZwischenablage );
+
+    nutzernameInput = document.getElementById( "id-nutzername" );
+    if ( nutzernameInput )  {
+
+        console.log( "Input-Element mit ID 'id-nutzername' nicht gefunden" );
+        return;
+    }
+
+    const nutzernameToClipboardButton = "id-nutzername-zu-passwort";
+    if ( !nutzernameToClipboardButton ) {
+            
+        console.error( "Button-Element mit ID 'id-nutzername-zu-passwort' nicht gefunden" );
+        return;
+    }
 
     console.log( "JavaScript initialisiert" );
 });
