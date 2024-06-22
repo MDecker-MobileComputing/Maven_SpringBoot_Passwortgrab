@@ -1,12 +1,25 @@
 package de.eldecker.dhbw.spring.passwortgrab.db.krypto;
 
+import static jakarta.xml.bind.DatatypeConverter.parseHexBinary;
+import static javax.crypto.Cipher.DECRYPT_MODE;
+import static javax.crypto.Cipher.ENCRYPT_MODE;
+
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,15 +35,17 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class AesAlgorithmus {
     
+    private final static Logger LOG = LoggerFactory.getLogger( AesAlgorithmus.class );
+    
     /**
      * Genauer Bezeichner Verschlüsselungsalgorithmus:
      * <ul>
      * <li>AES: Symmetrischer Verschlüsselungsalgorithmus, Block-Chiffre</li>
-     * <li>CBC: Betriebsart "Chiper Block Mode", braucht aber Initialisierungsvektor (IV).</li>
+     * <li>CBC: Betriebsart "Chiper Block Chaining", braucht aber Initialisierungsvektor (IV).</li>
      * <li>PKCS5Padding: Algo für Füll-Bytes, um Block bei Bedarf aufzufüllen.</li>
      * </ul>
      */
-    private static final String KRYPTO_ALGO_NAME = "AES/ECB/PKCS5Padding";    
+    private static final String KRYPTO_ALGO_NAME = "AES/CBC/PKCS5Padding";    
     
     /**
      * Symmetrischer Schlüssel (128 Bit) als Hexadezimalziffer mit 32 Buchstaben,
@@ -64,6 +79,12 @@ public class AesAlgorithmus {
     /** Sicherer Zufallsgenerator. */
     private SecureRandom _secureRandom = new SecureRandom();
     
+    /** Objekt für Ver-/Entschlüsselung */
+    private Cipher _aesCipher = null;
+
+    /** Objekt mit symmetrischem Schlüssel */
+    private SecretKeySpec _secretKey = null;
+    
     
     /**
      * Diese Methode wird unmittelbar nach Erzeugung der Bean aufgerufen,
@@ -89,7 +110,41 @@ public class AesAlgorithmus {
             throw new GeneralSecurityException( "Der AES-Schlüssel besteht nicht aus 32 Hex-Ziffern." );
         }        
         
+        final byte[] keyBytes = parseHexBinary( _schluesselHex ); // throws IllegalArgumentException (wenn keine gültige Hex-Zahl)
+        _secretKey = new SecretKeySpec( keyBytes, "AES" );
+        
+        _aesCipher = Cipher.getInstance( KRYPTO_ALGO_NAME );
+        
+        testVerEntschluesselung(); // throws GeneralSecurityException
+        
+        LOG.info( "Verschlüsselungs-Algo initialisiert: {}", _aesCipher  );
     }
+    
+    
+    /**
+     * Test: Verschlüsselt einen String und entschlüsselt ihn wieder.
+     *
+     * @throws GeneralSecurityException Fehler bei Ver- oder Entschlüsselung, oder wenn
+     *                                  Entschlüsselungsergebnis nicht dem Ausgangstext
+     *                                  entspricht.
+     */
+    private void testVerEntschluesselung() throws GeneralSecurityException {
+
+        final String testString = "Lorem Ipsum ?!*";
+        
+        final String initVektor = erzeugeZufaelligenIV();
+
+        final String testStringVerschluesselt = verschluesseln( testString, initVektor );
+        LOG.info( "Test-String verschlüsselt: \"{}\"", testStringVerschluesselt );
+
+        final String testStringEntschluesselt = entschluesseln( testStringVerschluesselt, initVektor );
+        LOG.info( "Test-String entschlüsselt: \"{}\" ", testStringEntschluesselt );
+
+        if ( testString.equals( testStringEntschluesselt ) == false ) {
+
+            throw new GeneralSecurityException( "Test für Ver- und Entschlüsselung fehlgeschlagen" );
+        }
+    }    
 
 
     /**
@@ -112,21 +167,34 @@ public class AesAlgorithmus {
         return _base64Encoder.encodeToString( zufallsByteArray );
     }
 
-    
+    private IvParameterSpec decodeInitVektor( String iv ) {
+        
+        byte[] byteArray = _base64Decoder.decode( iv );
+        return new IvParameterSpec( byteArray );
+    }
+
     /**
      * Klartext verschlüsseln.
      * 
      * @param stringKlartext String, der verschlüsselt werden soll
      * 
-     * @param iv Initialisierungsvektor für Betriebsmodus "CBC"
+     * @param ivStr Initialisierungsvektor für Betriebsmodus "CBC"
      * 
      * @return Chiffre als Base64-String, wird in Datenbank gespeichert
      * 
      * @throws GeneralSecurityException Fehler beim Verschlüsseln
      */
-    public String verschluesseln( String stringKlartext, String iv ) throws GeneralSecurityException {
+    public String verschluesseln( String stringKlartext, String ivStr ) throws GeneralSecurityException {
         
-        return "";
+        IvParameterSpec ivParameterSpec = decodeInitVektor( ivStr );
+
+        _aesCipher.init( ENCRYPT_MODE, _secretKey, ivParameterSpec ); // throws InvalidKeyException
+
+        byte[] klartextBytes = stringKlartext.getBytes();
+
+        byte[] encryptedBytes = _aesCipher.doFinal( klartextBytes ); // throws IllegalBlockSizeException, BadPaddingException
+        
+        return  _base64Encoder.encodeToString( encryptedBytes );
     }
 
 
@@ -135,15 +203,23 @@ public class AesAlgorithmus {
      * 
      * @param stringChiffre Chiffre als Base64-String (von Datenbank), die entschlüsselt werden soll
      * 
-     * @param iv Initialisierungsvektor für Betriebsmodus "CBC" 
+     * @param ivStr Initialisierungsvektor für Betriebsmodus "CBC" 
      * 
      * @return Klartext
      * 
      * @throws GeneralSecurityException Fehler beim Entschlüsseln
      */
-    public String entschluesseln( String stringChiffre, String iv ) throws GeneralSecurityException {
+    public String entschluesseln( String stringChiffre, String ivStr ) throws GeneralSecurityException {
         
-        return "";
+        IvParameterSpec ivParameterSpec = decodeInitVektor( ivStr );
+
+        _aesCipher.init( DECRYPT_MODE, _secretKey, ivParameterSpec ); // throws InvalidKeyException
+
+        byte[] chiffreBytes = _base64Decoder.decode( stringChiffre );
+
+        byte[] decryptedBytes = _aesCipher.doFinal( chiffreBytes ); // throws IllegalBlockSizeException, BadPaddingException
+
+        return new String( decryptedBytes );
     }
 
 }
