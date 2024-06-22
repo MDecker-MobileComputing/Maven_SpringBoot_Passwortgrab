@@ -28,6 +28,7 @@ public class PasswortEntity {
     @GeneratedValue( strategy = AUTO )
     private Long id;
 
+    /** Anzeigetitel des Passworts, z.B. "Testnutzer für System 123" */
     private String titel;
 
     /**

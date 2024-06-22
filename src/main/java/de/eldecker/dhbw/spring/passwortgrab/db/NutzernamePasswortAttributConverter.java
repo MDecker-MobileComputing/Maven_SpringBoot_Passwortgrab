@@ -1,6 +1,7 @@
 package de.eldecker.dhbw.spring.passwortgrab.db;
 
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
+import de.eldecker.dhbw.spring.passwortgrab.model.PasswortRuntimeException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-
 public class NutzernamePasswortAttributConverter implements AttributeConverter<NutzernamePasswort, String> {
 
     private final static Logger LOG = LoggerFactory.getLogger( NutzernamePasswortAttributConverter.class );
@@ -20,37 +20,36 @@ public class NutzernamePasswortAttributConverter implements AttributeConverter<N
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(NutzernamePasswort nutzernamePasswort) {
-
-        String nutzernamePasswortJson = null;
+    public String convertToDatabaseColumn( NutzernamePasswort nutzernamePasswort ) {
 
         try {
 
-            nutzernamePasswortJson = objectMapper.writeValueAsString(nutzernamePasswort);
+            return objectMapper.writeValueAsString( nutzernamePasswort );
 
-        } catch (final JsonProcessingException e) {
+        } catch ( final JsonProcessingException ex ) {
 
-            LOG.error( "Fehler bei der Konvertierung von NutzernamePasswort zu JSON: " + e.getMessage() );
+            final String fehlerText = "Fehler bei der Konvertierung von NutzernamePasswort zu JSON: " +
+                                      ex.getMessage();
+            LOG.error( fehlerText );
+            throw new PasswortRuntimeException( fehlerText, ex );
         }
-
-        return nutzernamePasswortJson;
     }
 
     @Override
-    public NutzernamePasswort convertToEntityAttribute(String nutzernamePasswortJson) {
-
-        NutzernamePasswort nutzernamePasswort = null;
+    public NutzernamePasswort convertToEntityAttribute( String nutzernamePasswortJson ) {
 
         try {
 
-            nutzernamePasswort = objectMapper.readValue(nutzernamePasswortJson, NutzernamePasswort.class);
+            return objectMapper.readValue( nutzernamePasswortJson,
+                                           NutzernamePasswort.class );
 
-        } catch (final IOException e) {
+        } catch ( final IOException ex ) {
 
-            LOG.error( "Fehler bei der Konvertierung von JSON zu NutzernamePasswort: " + e.getMessage() );
+            final String fehlerText = "Fehler bei der Konvertierung von JSON zu NutzernamePasswort: " +
+                                       ex.getMessage();
+            LOG.error( fehlerText, ex );
+            throw new PasswortRuntimeException( fehlerText, ex );
         }
-
-        return nutzernamePasswort;
     }
 
 }
