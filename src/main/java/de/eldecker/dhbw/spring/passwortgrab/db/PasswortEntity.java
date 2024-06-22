@@ -49,10 +49,10 @@ public class PasswortEntity {
     public PasswortEntity() {
     }
 
-    public PasswortEntity( String titel,
+    public PasswortEntity( String             titel,
                            NutzernamePasswort nutzernamePasswort,
-                           LocalDateTime gueltigBis,
-                           String kommentar ) {
+                           LocalDateTime      gueltigBis,
+                           String             kommentar ) {
 
         this.titel              = titel;
         this.nutzernamePasswort = nutzernamePasswort;

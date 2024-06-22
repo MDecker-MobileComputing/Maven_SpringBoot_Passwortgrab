@@ -47,8 +47,8 @@ public class DemoDatenImporter implements ApplicationRunner {
         final long anzahlPasswoerterAlt = _passwortRepo.count();
         if ( anzahlPasswoerterAlt > 0 ) {
 
-            LOG.info( "Es sind schon {} Passwörter in der Datenbank, deshalb kein Import von Demo-Daten." );
-
+            LOG.info( "Es sind schon {} Passwörter in der Datenbank, deshalb kein Import von Demo-Daten.",
+                      anzahlPasswoerterAlt );
         } else {
 
             LOG.info( "Noch keine Passwörter in der Datenbank, importiere Demo-Daten." );
