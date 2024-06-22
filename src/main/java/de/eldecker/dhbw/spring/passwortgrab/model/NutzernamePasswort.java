@@ -1,5 +1,7 @@
 package de.eldecker.dhbw.spring.passwortgrab.model;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Ein Objekt dieser Klasse enthält einen Nutzernamen und ein Passwort sowie
@@ -23,10 +25,10 @@ public class NutzernamePasswort {
      * Nutzername für Anmeldung an einem System oder Web-Dienst; kann
      * auch eine Email-Adresse sein.
      */
-    private String nutzername;
+    private String _nutzername;
     
     /** Passwort. */
-    private String passwort;
+    private String _passwort;
 
     
     /**
@@ -40,9 +42,9 @@ public class NutzernamePasswort {
      */
     public NutzernamePasswort( String iv, String nutzername, String passwort ) {
 
-        this._iv = iv;
-        this.nutzername = nutzername;
-        this.passwort = passwort;
+        _iv         = iv;
+        _nutzername = nutzername;
+        _passwort   = passwort;
     }
 
     public String getIv() {
@@ -52,40 +54,67 @@ public class NutzernamePasswort {
 
     public void setIv( String iv ) {
 
-        this._iv = iv;
+        _iv = iv;
     }
 
     public String getNutzername() {
 
-        return nutzername;
+        return _nutzername;
     }
 
     public void setNutzername( String nutzername ) {
 
-        this.nutzername = nutzername;
+        _nutzername = nutzername;
     }
 
     public String getPasswort() {
 
-        return passwort;
+        return _passwort;
     }
 
     public void setPasswort( String passwort ) {
 
-        this.passwort = passwort;
+        _passwort = passwort;
     }
 
+    /**
+     * Methode zur Berechnung Informationsgehalt von Passwort.
+     * <br><br>
+     * 
+     * siehe auch: https://onlinetexttools.com/calculate-text-entropy
+     * 
+     * @return Entropie in Anzahl Bits, auf ganze Zahl gerundet
+     */
     public int berechnePasswortEntropie() {
-
-        if (passwort == null || passwort.isEmpty()) {
-
+        
+        if ( _passwort == null || _passwort.isEmpty() ) {
+            
             return 0;
         }
-    
-        long chars = passwort.chars().distinct().count();
-        return (int) ( Math.log( chars ) / Math.log( 2 ) * passwort.length() );
+
+        Map<Character, Integer> zeichenZuFrequenz = new HashMap<>( _passwort.length() );
+        for ( char c : _passwort.toCharArray() ) {
+            
+            zeichenZuFrequenz.put( c, zeichenZuFrequenz.getOrDefault( c, 0 ) + 1 );
+        }
+
+        double entropie = 0;
+        for ( int frequenz : zeichenZuFrequenz.values() ) {
+            
+            double wahrscheinlichkeit = (double) frequenz / _passwort.length();
+            entropie -= wahrscheinlichkeit * Math.log( wahrscheinlichkeit ) / Math.log( 2 );
+        }
+
+        return (int) entropie;
     }
     
+    
+    /**
+     * String-Repräsentation des Objekts.
+     * 
+     * @return String enthält nicht Nutzername + Passwort (klar!), sondern
+     *         Entropie des Passworts
+     */
     @Override
     public String toString() {
         

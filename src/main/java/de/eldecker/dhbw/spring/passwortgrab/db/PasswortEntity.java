@@ -54,9 +54,7 @@ public class PasswortEntity {
     @Lob
     private String kommentar;
 
-
-
-
+    
     /**
      * Default-Konstruktor für JPA.
      */
@@ -148,7 +146,7 @@ public class PasswortEntity {
     @Override
     public String toString() {
 
-        return "Passwort\"" + titel + "\"";
+        return "Passwort mit Titel \"" + titel + "\".";
     }
 
 }
