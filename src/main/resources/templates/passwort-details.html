@@ -9,7 +9,7 @@
 <body>
 
     <h1>
-        Passwortgrab: 
+        Passwort: 
         "<span th:text="${passwortObjekt.titel}"></span>"
     </h1>
 
@@ -22,6 +22,7 @@
             <td class="fett">Passwort: </td>
             <td>
                 <input id="id-passwort" class="schrift_monospace" type="password" th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
+                &nbsp;
                 <button id="id-toggleButton">Sichtbarkeit umschalten</button>
             </td>
         </tr>
