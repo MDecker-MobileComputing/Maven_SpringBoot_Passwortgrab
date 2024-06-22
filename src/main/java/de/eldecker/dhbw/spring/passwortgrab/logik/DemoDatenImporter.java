@@ -27,7 +27,8 @@ public class DemoDatenImporter implements ApplicationRunner {
 
     private final static Logger LOG = LoggerFactory.getLogger( DemoDatenImporter.class );
 
- 
+    /** Zähler für Anzahl der erzeugten Passwörter. */
+    private static int PASSWORT_ZAEHLER = 1; 
    
     /** Repo-Bean für Zugriff auf Tabelle mit Passwörtern. */
     @Autowired
@@ -56,16 +57,16 @@ public class DemoDatenImporter implements ApplicationRunner {
             LOG.info( "Noch keine Passwörter in der Datenbank, importiere Demo-Daten." );
                         
             NutzernamePasswort np1 = erzeugePasswortNutzername( "admin"        , "geheim-123"    );
-            NutzernamePasswort np2 = erzeugePasswortNutzername( "test-nutzer-1", "secret-789"    );
-            NutzernamePasswort np3 = erzeugePasswortNutzername( "herbert"      , "geheim+secret" );
+            NutzernamePasswort np2 = erzeugePasswortNutzername( "admin"        , "geheim-123"    ); // selber Nutzer + Passwort, aber anderer IV
+            NutzernamePasswort np3 = erzeugePasswortNutzername( "test-nutzer-1", "secret-789"    );
+            NutzernamePasswort np4 = erzeugePasswortNutzername( "herbert"      , "geheim+secret" );
 
-            int zaehler = 0;
-            
-            PasswortEntity p1 = new PasswortEntity( "Testnutzer für Datei-Server F1", np1, erzeugeGueltigBis( 10 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
-            PasswortEntity p2 = new PasswortEntity( "Testnutzer für Web-Server W2"  , np2, erzeugeGueltigBis(  5 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
-            PasswortEntity p3 = new PasswortEntity( "Testnutzer für Mail-Server"    , np3, erzeugeGueltigBis( -3 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
+            PasswortEntity p1 = erzeugePasswortEntity( "Admin für Datei-Server F1"      , np1, 10 ); 
+            PasswortEntity p2 = erzeugePasswortEntity( "Admin für Datei-Server F2"      , np2, 10 ); // selber Nutzername + Passwort wie p1         
+            PasswortEntity p3 = erzeugePasswortEntity( "Testnutzer für Web-Server TEST3", np3,  0 ); 
+            PasswortEntity p4 = erzeugePasswortEntity( "Mail-Server"                    , np4, -3 ); // schon abgelaufen
 
-            List<PasswortEntity> passwortListe = List.of( p1, p2, p3 );
+            List<PasswortEntity> passwortListe = List.of( p1, p2, p3, p4 );
             _passwortRepo.saveAll( passwortListe );
 
             final long anzahlPasswoerterNeu = _passwortRepo.count();
@@ -73,6 +74,18 @@ public class DemoDatenImporter implements ApplicationRunner {
         }
     }
     
+    
+    /**
+     * Hilfsmethode, um {@link NutzernamePasswort} mit zufällig erzeugtem Initialsierungsvektor
+     * zu erzeugen.
+     * 
+     * @param nutzername Nutzername
+     * 
+     * @param passwort Passwort
+     * 
+     * @return Objekt befüllt mit {@code nutzername} und {@code passwort} sowie zufällig
+     *         erzeugtem Initialisierungsvektor
+     */
     private NutzernamePasswort erzeugePasswortNutzername( String nutzername, String passwort ) {
         
         String iv = _aes.erzeugeZufaelligenIV();
@@ -80,11 +93,35 @@ public class DemoDatenImporter implements ApplicationRunner {
         return new NutzernamePasswort( iv, nutzername, passwort );
     }
 
-
+    
     /**
-     * Zeitpunkt in Zukunft erzeugen.
+     * Hilfsmethode zum Erzeugen neues {@link PasswortEntity}-Objekt.
+     * 
+     * @param titel Titel des Datensatz
+     * 
+     * @param np Nutzername und Passwort
+     * 
+     * @param anzahlTage Anzahl Tage in Zukunft oder (bei negativem Vorzeichen)
+     *                   in Vergangenheit.
+     * 
+     * @return Objekt mit allen Feldern bis auf ID gefüllt
+     */
+    private PasswortEntity erzeugePasswortEntity( String titel, NutzernamePasswort np, int anzahlTage ) {
+        
+        LocalDate letzterGueltigkeitsTag = erzeugeGueltigBis( anzahlTage );
+        
+        String kommentar = "Von Datenimporter angelegt, Nr. " + PASSWORT_ZAEHLER;
+        PASSWORT_ZAEHLER++;
+        
+        return new PasswortEntity( titel, np, letzterGueltigkeitsTag, kommentar );
+    }
+
+    
+    /**
+     * Zeitpunkt in Zukunft oder Vergangenheit erzeugen.
      *
-     * @param tageInZukunft Anzahl Tage in der Zukunft.
+     * @param tageInZukunft Anzahl Tage in der Zukunft; wenn negativ,
+     *                      dann Datum in der Vergangenheit
      *
      * @return Gültigkeitszeitpunkt, der {@code stundenInZukunft}
      *         Stunden in der Zukunft liegt; auf volle Sekunden
