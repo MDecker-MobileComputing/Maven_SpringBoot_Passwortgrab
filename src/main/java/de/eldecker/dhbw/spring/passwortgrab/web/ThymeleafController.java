@@ -77,7 +77,7 @@ public class ThymeleafController {
      * 
      * @param model Objekt für Platzhalterwerte in Template
      * 
-     * @param id Pfadparameter mit ID des Datensatzes, der angezeigt werden soll 
+     * @param id ID des Datensatzes, der angezeigt werden soll (Pfadparameter) 
      * 
      * @return Name von Template-Datei {@code passwort-details.html} 
      *         oder {@code passwort-fehler.html} ohne Datei-Endung
@@ -91,8 +91,7 @@ public class ThymeleafController {
             
             String fehlermeldung = format( "Kein Passwort mit ID=%d gefunden.", id );
             LOG.warn( fehlermeldung );
-            model.addAttribute( "fehlermeldung", fehlermeldung );
-            
+            model.addAttribute( "fehlermeldung", fehlermeldung );            
             return "passwort-fehler";
             
         } else {
@@ -102,6 +101,46 @@ public class ThymeleafController {
         }
         
         return "passwort-details";
+    }
+    
+    
+    /**
+     * Passwortdetails zu einer bestimmten Revision anzeigen.
+     * 
+     * @param model Objekt für Platzhalterwerte in Template
+     * 
+     * @param id ID von Passwort (Pfadparameter)
+     * 
+     * @param revisionNr Nummer der Revision
+     * 
+     * @return Name von Template-Datei {@code passwort-details.html} 
+     *         oder {@code passwort-fehler.html} ohne Datei-Endung
+     */
+    @GetMapping( "/passwort-revision/{id}/{revisionNr}" )
+    public String getPasswortRevision( Model model,
+                                       @PathVariable Long id,
+                                       @PathVariable Integer revisionNr ) {
+        
+        Optional<Revision<Integer, PasswortEntity>> revisionOptional = 
+                                         _revisionsRepo.findRevision( id, revisionNr );
+        
+        if ( revisionOptional.isEmpty() ) {
+            
+            String fehlermeldung = 
+                    format( "Kein Revision für Passwort-ID=%d und Revisions-Nr=%d gefunden.", 
+                            id, revisionNr );
+            LOG.warn( fehlermeldung );
+            model.addAttribute( "fehlermeldung", fehlermeldung );            
+            return "passwort-fehler";            
+        }
+        
+        Revision<Integer, PasswortEntity> revision = revisionOptional.get();
+        PasswortEntity passwortEntity = revision.getEntity();
+        
+        model.addAttribute( "passwortEntity", passwortEntity                      );
+        model.addAttribute( "zeitpunkt"     , revision.getRevisionInstant().get() );
+        
+        return "passwort-revision";
     }
     
     

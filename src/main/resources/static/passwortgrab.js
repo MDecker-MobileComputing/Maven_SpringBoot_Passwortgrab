@@ -72,18 +72,19 @@ document.addEventListener( "DOMContentLoaded", function() {
     passwortToClipboardButton.addEventListener( "click", kopierePasswortInZwischenablage );
 
     nutzernameInput = document.getElementById( "id-nutzername" );
-    if ( nutzernameInput )  {
+    if ( !nutzernameInput )  {
 
         console.log( "Input-Element mit ID 'id-nutzername' nicht gefunden" );
         return;
     }
 
-    const nutzernameToClipboardButton = "id-nutzername-zu-passwort";
+    const nutzernameToClipboardButton = document.getElementById( "id-nutzername-zu-passwort" );
     if ( !nutzernameToClipboardButton ) {
             
         console.error( "Button-Element mit ID 'id-nutzername-zu-passwort' nicht gefunden" );
         return;
     }
+    nutzernameToClipboardButton.addEventListener( "click", kopierenNutzernameInZwischenablage );
 
     console.log( "JavaScript initialisiert" );
 });
