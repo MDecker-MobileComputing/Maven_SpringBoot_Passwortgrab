@@ -74,11 +74,12 @@ public class DemoDatenImporter implements ApplicationRunner {
      * @param stundenInZukunft Anzahl Stunden in der Zukunft
      *
      * @return Gültigkeitszeitpunkt, der {@code stundenInZukunft}
-     *         Stunden in der Zukunft liegt.
+     *         Stunden in der Zukunft liegt; auf volle Sekunden
+     *         gerundet.
      */
     private LocalDateTime erzeugeGueltigBis( int stundenInZukunft ) {
 
-        return now().plusHours( stundenInZukunft );
+        return now().plusHours( stundenInZukunft ).withNano( 0 );
     }
 
 }
