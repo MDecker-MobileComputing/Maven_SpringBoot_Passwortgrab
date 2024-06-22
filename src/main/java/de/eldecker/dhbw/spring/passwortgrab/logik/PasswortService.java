@@ -6,10 +6,12 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
 
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortEntity;
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortRepo;
+import de.eldecker.dhbw.spring.passwortgrab.db.PasswortRevisionsRepo;
 import de.eldecker.dhbw.spring.passwortgrab.db.krypto.AesAlgorithmus;
 import de.eldecker.dhbw.spring.passwortgrab.helferlein.DatumUtils;
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
@@ -25,6 +27,10 @@ public class PasswortService {
     /** Repo-Bean für Zugriff auf DB-Tabelle mit Passwörtern. */
     @Autowired
     private PasswortRepo _passwortRepo;
+
+    /** Repo-Bean für Zugriff auf Revisionen von <i>Spring Data JPA</i>. */
+    @Autowired
+    private PasswortRevisionsRepo _passwortRevisionsRepo;
     
     /** Hilfs-Bean mit Funktionen zur Datumsberechnung. */
     @Autowired
@@ -169,6 +175,28 @@ public class PasswortService {
             
             throw new PasswortException( "Gültigkeitsdatum darf nicht in Vergangenheit liegen." );
         }
+    }
+    
+
+    /**
+     * Aktuelle (=höchste) Revisionsnummer für ein bestimmtes Passwort anhand {@code id} holen. 
+     * 
+     * @param id Primärschlüsselwert der {@link PasswortEntity}
+     * 
+     * @return Optional mit aktuellen Revisionsnummer (wenn gefunden)
+     */
+    public Optional<Integer> getLetzteRevisionsNummer( Long id ) {
+        
+        Optional<Revision<Integer, PasswortEntity>> revisionOptional = 
+                        _passwortRevisionsRepo.findLastChangeRevision( id );
+        
+        if ( revisionOptional.isEmpty() ) {
+            
+            return Optional.empty();
+        }
+        
+        Revision<Integer, PasswortEntity> revision = revisionOptional.get();
+        return revision.getRevisionNumber();
     }
     
 }

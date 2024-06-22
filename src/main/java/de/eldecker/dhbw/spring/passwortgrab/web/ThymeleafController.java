@@ -96,8 +96,11 @@ public class ThymeleafController {
             
         } else {
             
+            Optional<Integer> revisionNrOptional = _passwortService.getLetzteRevisionsNummer( id );
+            
             PasswortEntity passwortEntity = passwortOptional.get();
-            model.addAttribute( "passwortObjekt", passwortEntity );
+            model.addAttribute( "passwortObjekt"    , passwortEntity     );
+            model.addAttribute( "revisionNrOptional", revisionNrOptional );
         }
         
         return "passwort-details";

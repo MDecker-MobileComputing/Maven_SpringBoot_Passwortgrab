@@ -1,6 +1,5 @@
 package de.eldecker.dhbw.spring.passwortgrab.db;
 
-
 import org.springframework.data.repository.history.RevisionRepository;
 
 
@@ -14,6 +13,6 @@ import org.springframework.data.repository.history.RevisionRepository;
  * für die offizielle Dokumentation zu <i>Spring Data Envers</i>.
  */
 public interface PasswortRevisionsRepo 
-                 extends RevisionRepository<PasswortEntity, Long, Integer>{
+                 extends RevisionRepository<PasswortEntity, Long, Integer> {
                      
 }

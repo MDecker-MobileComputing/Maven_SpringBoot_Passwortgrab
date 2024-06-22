@@ -45,6 +45,17 @@
             <td class="fett">Kommentar: </td>
             <td><span th:text="${passwortObjekt.kommentar}"></span></td>
         </tr>
+        <tr>
+            <td class="fett">Revisions-Nr: </td>
+            <td>
+                <div th:if="${revisionNrOptional.isPresent()}">
+                    <span th:text="${revisionNrOptional.get()}"></span>
+                </div>
+                <div th:unless="${revisionNrOptional.isPresent()}">
+                    <span>???</span>
+                </div>
+            </td>
+        </tr>
     </table>
     <br><br>    
 
