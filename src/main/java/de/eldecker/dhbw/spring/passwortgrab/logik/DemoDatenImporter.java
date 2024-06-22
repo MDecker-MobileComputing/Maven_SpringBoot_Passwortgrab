@@ -1,10 +1,9 @@
 package de.eldecker.dhbw.spring.passwortgrab.logik;
 
-import static java.time.LocalDate.now;
-
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortEntity;
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortRepo;
 import de.eldecker.dhbw.spring.passwortgrab.db.krypto.AesAlgorithmus;
+import de.eldecker.dhbw.spring.passwortgrab.helferlein.DatumUtils;
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
 
 import java.util.List;
@@ -37,6 +36,10 @@ public class DemoDatenImporter implements ApplicationRunner {
     /** Bean mit Methoden für Ver- und Entschlüsselung mit AES. */
     @Autowired
     private AesAlgorithmus _aes;
+    
+    /** Beans mit Hilfsmethoden für Datumsberechnungen. */
+    @Autowired
+    private DatumUtils _datumUtils;
 
 
     /**
@@ -108,28 +111,12 @@ public class DemoDatenImporter implements ApplicationRunner {
      */
     private PasswortEntity erzeugePasswortEntity( String titel, NutzernamePasswort np, int anzahlTage ) {
         
-        LocalDate letzterGueltigkeitsTag = erzeugeGueltigBis( anzahlTage );
+        LocalDate letzterGueltigkeitsTag = _datumUtils.erzeugeGueltigBis( anzahlTage );
         
         String kommentar = "Von Datenimporter angelegt, Nr. " + PASSWORT_ZAEHLER;
         PASSWORT_ZAEHLER++;
         
         return new PasswortEntity( titel, np, letzterGueltigkeitsTag, kommentar );
-    }
-
-    
-    /**
-     * Zeitpunkt in Zukunft oder Vergangenheit erzeugen.
-     *
-     * @param tageInZukunft Anzahl Tage in der Zukunft; wenn negativ,
-     *                      dann Datum in der Vergangenheit
-     *
-     * @return Gültigkeitszeitpunkt, der {@code stundenInZukunft}
-     *         Stunden in der Zukunft liegt; auf volle Sekunden
-     *         gerundet.
-     */
-    private LocalDate erzeugeGueltigBis( int tageInZukunft ) {
-
-        return now().plusDays( tageInZukunft );
     }
 
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Passwortgrab: Editor</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../passwortgrab_stil.css">
+</head>
+<body>
+
+    <h1>Passwort-Editor: <span th:text="${ueberschrift}"></span></h1>
+
+    <form action="/app/neu_aendern" method="post">
+
+        <table>
+            <tr>
+                <td class="fett">Titel: </td>
+                <td><input class="schrift_monospace" type="text" th:value="${titel}" name="titel"></td>
+            </tr>
+            <tr>
+                <td class="fett">Nutzername: </td>
+                <td><input class="schrift_monospace" type="text" th:value="${nutzername}" name="nutzername"></td>
+            </tr>
+            <tr>
+                <td class="fett">Passwort: </td>
+                <td><input class="schrift_monospace" type="password" th:value="${passwort1}" name="passwort1"></td>
+            </tr>
+            <tr>
+                <td class="fett">Passwort (Wdh.): </td>
+                <td><input class="schrift_monospace" type="password" th:value="${passwort2}" name="passwort2"></td>
+            </tr>
+            <tr>
+                <td class="fett">Gültig bis:</td>
+                <td><input class="schrift_monospace" type="date" th:value="${gueltigBis}" name="gueltigBis"></td>
+            </tr>
+            <tr>
+                <td class="fett">Kommentar:</td>
+                <td><input class="schrift_monospace" type="text" th:value="${kommentar}" name="kommentar"></td>
+            </tr>            
+        </table>
+        <br>
+
+        <input type="submit" value="Speichern"   >
+        <input type="reset"  value="Zurücksetzen">
+    </form>
+
+</body>

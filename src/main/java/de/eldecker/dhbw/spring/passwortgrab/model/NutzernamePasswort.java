@@ -16,8 +16,8 @@ import java.util.Map;
 public class NutzernamePasswort {
 
     /** 
-     * Initialisierungsvektor (128 Bit) für AES-Verschlüsselung im CBC-Modus.
-     * Muss zufällig sein, muss aber nicht geheim gehalten werden. 
+     * Initialisierungsvektor (128 Bit) in Base64-Kodierung für AES-Verschlüsselung im CBC-Modus.
+     * Muss zufällig sein, muss aber nicht geheim gehalten werden.      
      */
     private String _iv;
 
