@@ -222,7 +222,7 @@ public class ThymeleafController {
                                           gueltigBis, 
                                           kommentar );
                 
-                erfolgsText = format( "Passwort mit ID=%d geändert: %d", id );
+                erfolgsText = format( "Passwort mit ID=%d geändert", id );
             }
             catch ( PasswortException ex ) {
                 
@@ -283,7 +283,9 @@ public class ThymeleafController {
             return "passwort-fehler";
         }
         
-        model.addAttribute( "anzahlRevisionen", revisions.getContent().size() );
+        List<Revision<Integer, PasswortEntity>> revisionenListe = revisions.getContent();
+        
+        model.addAttribute( "revisionenListe", revisionenListe );
         
         return "passwort-historie";
     }

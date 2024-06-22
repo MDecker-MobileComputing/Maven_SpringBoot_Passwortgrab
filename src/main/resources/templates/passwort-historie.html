@@ -17,7 +17,18 @@
 
     <p>
         <span class="fett">Anzahl Revisionen:</span>
-        <span th:text="${anzahlRevisionen}"></span>
+        <span th:text="${#lists.size(revisionenListe)}"></span>
+    </p>
+    <br>
+
+    <p th:each="revision : ${revisionenListe}">
+        <a th:href="'/app/passwort-revision/' + ${id} + '/' + ${revision.getRevisionNumber().get()}">
+            <span th:text="'Revision-Nr. ' + ${revision.getRevisionNumber().get()}"></span>
+            vom
+            <span th:text="${#temporals.format(revision.getRevisionInstant().get(), 'dd.MM.yyyy (EE)')}"></span>
+            um
+            <span th:text="${#temporals.format(revision.getRevisionInstant().get(), 'HH:mm:ss') + ' Uhr'}"></span>        
+        </a>
     </p>
     <br><br>
 
