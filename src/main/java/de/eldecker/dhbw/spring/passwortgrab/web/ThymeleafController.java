@@ -198,7 +198,7 @@ public class ThymeleafController {
      * @return Name von Template-Datei {@code passwort-erfolg} ohne Datei-Endung;
      *         im Fehlerfall {@code passwort-fehler.html}
      */
-    @PostMapping( "/neu_aendern")
+    @PostMapping( "/neu-aendern")
     public String editorPost( Model model,
                               @RequestParam( "id"         ) long      id        ,
                               @RequestParam( "titel"      ) String    titel     ,

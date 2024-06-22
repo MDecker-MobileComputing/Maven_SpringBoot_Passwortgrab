@@ -10,7 +10,7 @@
 
     <h1>Passwort-Editor: <span th:text="${ueberschrift}"></span></h1>
 
-    <form action="/app/neu_aendern" method="post">
+    <form action="/app/neu-aendern" method="post">
 
         <table>
             <tr>
@@ -42,8 +42,12 @@
 
         <input type="hidden" th:value="${id}" name="id">
 
-        <input type="submit" value="Speichern"   >
+        <input type="submit" value="Speichern"   > &nbsp;
         <input type="reset"  value="Zurücksetzen">
+        
     </form>
+    <br><br>
+
+    <a href="/app/passwort-liste">Abbrechen</a>
 
 </body>

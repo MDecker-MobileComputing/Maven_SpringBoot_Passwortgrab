@@ -25,4 +25,5 @@ td {
 
 .schrift_monospace {
     font-family: monospace;
+    width: 300px;
 }

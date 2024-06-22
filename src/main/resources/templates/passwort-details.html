@@ -49,11 +49,12 @@
     <br><br>    
 
     <a th:href="'/app/passwort-aendern/' + ${id}">Ändern</a>
-    <br><br>
+    &nbsp;
     <a th:href="'/app/passwort-historie/' + ${id}">Revisionen</a>
     <br><br>
     <a href="/app/passwort-liste">Zurück zur Liste</a>
-
+    
+    <!-- JavaScript als letztes laden -->
     <script src="/passwortgrab.js"></script>
 
 </body>
