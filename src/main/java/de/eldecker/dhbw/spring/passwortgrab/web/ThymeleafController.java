@@ -1,5 +1,7 @@
 package de.eldecker.dhbw.spring.passwortgrab.web;
 
+import static java.lang.String.format;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +59,7 @@ public class ThymeleafController {
      * @param id Pfadparameter mit ID des Datensatzes, der angezeigt werden soll 
      * 
      * @return Name von Template-Datei {@code passwort-details.html} 
-     *         doer {@code passwort-fehler.html} ohne Datei-Endung
+     *         oder {@code passwort-fehler.html} ohne Datei-Endung
      */
     @GetMapping( "/passwort-details/{id}" )
     public String getPasswortDetails( Model model, 
@@ -66,7 +68,7 @@ public class ThymeleafController {
         Optional<PasswortEntity> passwortOptional = _passwortRepo.findById( id );        
         if ( passwortOptional.isEmpty() ) {
             
-            String fehlermeldung = String.format( "Kein Passwort mit ID=%d gefunden.", id );
+            String fehlermeldung = format( "Kein Passwort mit ID=%d gefunden.", id );
             LOG.warn( fehlermeldung );
             model.addAttribute( "fehlermeldung", fehlermeldung );
             

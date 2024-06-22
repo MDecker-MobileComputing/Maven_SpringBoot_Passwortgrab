@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 /**
- * Einstiegspunkt
+ * Einstiegspunkt für Programmausführung.
  */
 @SpringBootApplication
 public class PasswortgrabApplication {

@@ -13,6 +13,29 @@
         "<span th:text="${passwortObjekt.titel}"></span>"
     </h1>
 
+    <p>
+        <span class="fett">Nutzername: </span>
+        <input type="text" th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}">
+    </p>
+    <p>
+        <span class="fett">Passwort: </span>
+        <input id="id-passwort" type="text" th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
+    </p>
+    <br>
+
+    <p>
+        <span class="fett">Gültig bis: </span>
+        <span th:text="${#temporals.format(passwortObjekt.getGueltigBis(), 'dd. MMMM yyyy (EE), HH:mm')} + ' Uhr'"></span>
+        <span th:if="${passwortObjekt.istAbgelaufen()}" class="fett"> – Passwort ist abgelaufen!</span>    
+    </p>
+
+    <p>
+        <span class="fett">Kommentar: </span>
+        <span th:text="${passwortObjekt.kommentar}"></span>
+    </p>
+    <br><br>
+    
+
     <a href="/app/passwort-liste">Zurück zur Liste</a>
 
 </body>
