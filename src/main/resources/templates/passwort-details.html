@@ -17,7 +17,8 @@
         <tr>
             <td class="fett">Nutzername: </td>
             <td>
-                <input id="id-nutzername" class="schrift_monospace" type="text" th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}">
+                <input id="id-nutzername" class="schrift_monospace" type="text" readonly="readonly" 
+                       th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}">
                 &nbsp;
                 <button id="id-nutzername-zu-passwort">In Zwischenablage kopieren</button>
             </td>
@@ -25,7 +26,8 @@
         <tr>
             <td class="fett">Passwort: </td>
             <td>
-                <input id="id-passwort" class="schrift_monospace" type="password" th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
+                <input id="id-passwort" class="schrift_monospace" type="password" readonly="readonly" 
+                        th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
                 &nbsp;
                 <button id="id-toggleButton">Sichtbarkeit umschalten</button>
                 &nbsp;
@@ -35,7 +37,7 @@
         <tr>
             <td class="fett">Gültig bis: </td>
             <td>
-                <span th:text="${#temporals.format(passwortObjekt.getGueltigBis(), 'dd. MMMM yyyy (EE), HH:mm')} + ' Uhr'"></span>
+                <span th:text="${#temporals.format(passwortObjekt.getGueltigBis(), 'dd. MMMM yyyy (EE)')}"></span>
                 <span th:if="${passwortObjekt.istAbgelaufen()}" class="fett"> – Passwort ist abgelaufen!</span>
             </td>
         </tr>
@@ -46,6 +48,8 @@
     </table>
     <br><br>    
 
+    <a th:href="'/app/passwort-aendern/' + ${id}">Ändern</a>
+    <br><br>
     <a href="/app/passwort-liste">Zurück zur Liste</a>
 
     <script src="/passwortgrab.js"></script>

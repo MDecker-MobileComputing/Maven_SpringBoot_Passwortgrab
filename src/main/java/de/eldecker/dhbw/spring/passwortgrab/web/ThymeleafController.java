@@ -22,6 +22,7 @@ import de.eldecker.dhbw.spring.passwortgrab.db.PasswortEntity;
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortRepo;
 import de.eldecker.dhbw.spring.passwortgrab.helferlein.DatumUtils;
 import de.eldecker.dhbw.spring.passwortgrab.logik.PasswortService;
+import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
 import de.eldecker.dhbw.spring.passwortgrab.model.PasswortException;
 
 
@@ -99,7 +100,7 @@ public class ThymeleafController {
     
     
     /**
-     * Neues Passwort anlegen.
+     * Webseite mit Editor für neuen Passwortdatensatz anzeigen. 
      * 
      * @param model Objekt für Platzhalterwerte in Template
      * 
@@ -111,11 +112,13 @@ public class ThymeleafController {
                 
         model.addAttribute( "ueberschrift", "Neues Passwort anlegen" );
         
-        model.addAttribute( "titel"     , "" );
-        model.addAttribute( "nutzername", "" );
-        model.addAttribute( "passwort1" , "" );
-        model.addAttribute( "passwort2" , "" );
-        model.addAttribute( "kommentar" , "" );
+        model.addAttribute( "id"        , "-1" );
+        model.addAttribute( "titel"     , ""   );
+        model.addAttribute( "nutzername", ""   );
+        model.addAttribute( "passwort1" , ""   );
+        model.addAttribute( "passwort2" , ""   );
+        model.addAttribute( "kommentar" , ""   );
+        
         
         model.addAttribute( "gueltigBis", _datumUtils.datumMorgenISO8610() );
         
@@ -124,10 +127,55 @@ public class ThymeleafController {
     
     
     /**
+     * Webseite mit Editor für Änderung von Passwort anzeigen.
+     * 
+     * @param model Objekt für Platzhalterwerte in Template
+     * 
+     * @param id ID von zu änderndem Passwort
+     * 
+     * @return Name von Template-Datei {@code passwort-editor.html}
+     *         ohne Datei-Endung; {code passwort-fehler.html}, 
+     *         wenn kein Passwort mit {@code id} gefunden wird.
+     */
+    @GetMapping( "/passwort-aendern/{id}")
+    public String editorPasswortNeu( Model model,
+                                     @PathVariable Long id ) {
+        
+        Optional<PasswortEntity> passwortOptional = _passwortRepo.findById( id );
+        if ( passwortOptional.isEmpty() ) {
+            
+            String fehlerText = format( "Kein Passwort mit ID=%d gefunden", id );       
+            LOG.error( fehlerText );
+            model.addAttribute( "fehlermeldung", fehlerText );            
+            return "passwort-fehler";
+        }
+                            
+        model.addAttribute( "ueberschrift", "Passwort ändern" );
+        
+        PasswortEntity passwort = passwortOptional.get();        
+        
+        model.addAttribute( "id"        , id                       );
+        model.addAttribute( "titel"     , passwort.getTitel()      );
+        model.addAttribute( "kommentar" , passwort.getKommentar()  );
+        model.addAttribute( "gueltigBis", passwort.getGueltigBis() );
+        
+        NutzernamePasswort nutzerPasswort = passwort.getNutzernamePasswort();
+        
+        model.addAttribute( "nutzername", nutzerPasswort.getNutzername() );
+        model.addAttribute( "passwort1" , nutzerPasswort.getPasswort()   );
+        model.addAttribute( "passwort2" , nutzerPasswort.getPasswort()   );
+                 
+        return "passwort-editor";
+    }    
+    
+    
+    /**
      * Controller, der vom Formular in Template "passwort-editor" gesendete
      * Werte entgegennimmt für neues oder geändertes Passwort.
      * 
      * @param model Objekt für Platzhalterwerte in Template
+     * 
+     * @param id ID des zu ändernden Passworts oder {@code -1} für neues Passwort  
      * 
      * @param titel Titel des Passwortdatensatzes, z.B. "Testnutzer für Server 123"
      * 
@@ -146,6 +194,7 @@ public class ThymeleafController {
      */
     @PostMapping( "/neu_aendern")
     public String editorPost( Model model,
+                              @RequestParam( "id"         ) long      id        ,
                               @RequestParam( "titel"      ) String    titel     ,
                               @RequestParam( "nutzername" ) String    nutzername,
                               @RequestParam( "passwort1"  ) String    passwort1 ,
@@ -153,28 +202,56 @@ public class ThymeleafController {
                               @RequestParam( "gueltigBis" ) LocalDate gueltigBis,
                               @RequestParam( "kommentar"  ) String    kommentar
                             ) {
-        try {
+
         
-            long id = _passwortService.neuesPasswort( titel, 
-                                                      nutzername, 
-                                                      passwort1, passwort2, 
-                                                      gueltigBis, 
-                                                      kommentar ); // throws PasswortException
-                        
-            String erfolgsText = format( "Neues Password mit ID=%d angelegt.", id );
-            LOG.info( erfolgsText );
-            model.addAttribute( "meldung", erfolgsText );
+        String erfolgsText = "";
+        
+        if ( id > 0 ) { // Passwort ändern
             
-            return "passwort-erfolg"; 
+            try {
+
+                _passwortService.aendern( id,
+                                          titel,
+                                          nutzername, 
+                                          passwort1, passwort2, 
+                                          gueltigBis, 
+                                          kommentar );
+                
+                erfolgsText = format( "Passwort mit ID=%d geändert.", id );
+            }
+            catch ( PasswortException ex ) {
+                
+                String fehlerText = "Fehler beim Ändern von Passwort: " + ex.getMessage();             
+                LOG.error( fehlerText, ex );
+                model.addAttribute( "fehlermeldung", fehlerText );                
+                return "passwort-fehler";                
+            }
+                                      
+        } else { // neues Passwort
+
+            try {
+
+                long idNeu = _passwortService.neu( titel, 
+                                                   nutzername, 
+                                                   passwort1, passwort2, 
+                                                   gueltigBis, 
+                                                   kommentar );
+
+                erfolgsText = format( "Neues Passwort mit ID=%d angelegt.", idNeu );
+            }
+            catch ( PasswortException ex ) {
+                
+                String fehlerText = "Fehler beim Anlegen von neuem Passwort: " + ex.getMessage();             
+                LOG.error( fehlerText, ex );
+                model.addAttribute( "fehlermeldung", fehlerText );                
+                return "passwort-fehler";
+            }                
         }
-        catch ( PasswortException ex ) {
-            
-            String fehlerText = "Fehler beim Anlegen von neuem Passwort: " + ex.getMessage();             
-            LOG.error( fehlerText, ex );
-            model.addAttribute( "fehlermeldung", fehlerText );
-            
-            return "passwort-fehler";
-        }
+        
+        LOG.info( erfolgsText );
+        model.addAttribute( "meldung", erfolgsText );                                 
+        
+        return "passwort-erfolg";            
     }
     
 }
