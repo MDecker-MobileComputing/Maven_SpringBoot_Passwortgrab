@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortEntity;
 import de.eldecker.dhbw.spring.passwortgrab.db.PasswortRepo;
+import de.eldecker.dhbw.spring.passwortgrab.db.PasswortRevisionsRepo;
 import de.eldecker.dhbw.spring.passwortgrab.helferlein.DatumUtils;
 import de.eldecker.dhbw.spring.passwortgrab.logik.PasswortService;
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
@@ -38,6 +41,9 @@ public class ThymeleafController {
     /** Repo-Bean für Zugriff auf Datenbanktabelle mit Passwörtern. */
     @Autowired
     private PasswortRepo _passwortRepo;
+    
+    @Autowired
+    private PasswortRevisionsRepo _revisionsRepo;
     
     /** Hilfs-Bean für Datumsberechnungen. */
     @Autowired
@@ -202,7 +208,6 @@ public class ThymeleafController {
                               @RequestParam( "gueltigBis" ) LocalDate gueltigBis,
                               @RequestParam( "kommentar"  ) String    kommentar
                             ) {
-
         
         String erfolgsText = "";
         
@@ -217,7 +222,7 @@ public class ThymeleafController {
                                           gueltigBis, 
                                           kommentar );
                 
-                erfolgsText = format( "Passwort mit ID=%d geändert.", id );
+                erfolgsText = format( "Passwort mit ID=%d geändert: %d", id );
             }
             catch ( PasswortException ex ) {
                 
@@ -252,6 +257,35 @@ public class ThymeleafController {
         model.addAttribute( "meldung", erfolgsText );                                 
         
         return "passwort-erfolg";            
+    }
+    
+    
+    /**
+     * Revisionen für ein Passwort anzeigen.
+     * 
+     * @param model Objekt für Platzhalterwerte in Template
+     * 
+     * @param id Primärschlüssel des Passworts
+     * 
+     * @return Name von Template-Datei {@code passwort-historie} ohne Datei-Endung.
+     */
+    @GetMapping( "/passwort-historie/{id}" )
+    public String getPasswortHistorie( Model model,
+                                       @PathVariable Long id ) {
+    
+        Revisions<Integer, PasswortEntity> revisions = _revisionsRepo.findRevisions( id );
+                        
+        if ( revisions.isEmpty() ) {
+            
+            String fehlerText = format( "Historie für ungültige Passwort-ID %d abgefragt.", id );
+            LOG.warn( fehlerText );
+            model.addAttribute( "fehlermeldung", fehlerText );
+            return "passwort-fehler";
+        }
+        
+        model.addAttribute( "anzahlRevisionen", revisions.getContent().size() );
+        
+        return "passwort-historie";
     }
     
 }

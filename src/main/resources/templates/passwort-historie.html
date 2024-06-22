@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Passwortgrab: Revisionshistorie eines Passworts</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../passwortgrab_stil.css">
+</head>
+<body>
+
+    <h1>Revisionshistorie</h1>
+        
+    <p th:if="${meldung!= null}">
+        <span class="fett">Meldung: </span>
+        <span th:text="${meldung}"></span>
+    </p>
+
+    <p>
+        <span class="fett">Anzahl Revisionen:</span>
+        <span th:text="${anzahlRevisionen}"></span>
+    </p>
+    <br><br>
+
+    <a href="/app/passwort-liste">Zurück zur Liste</a>
+
+</body>
