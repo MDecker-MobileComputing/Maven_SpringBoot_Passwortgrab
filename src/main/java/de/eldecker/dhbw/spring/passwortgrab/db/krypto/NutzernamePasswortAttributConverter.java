@@ -1,4 +1,4 @@
-package de.eldecker.dhbw.spring.passwortgrab.db;
+package de.eldecker.dhbw.spring.passwortgrab.db.krypto;
 
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
 import de.eldecker.dhbw.spring.passwortgrab.model.PasswortRuntimeException;

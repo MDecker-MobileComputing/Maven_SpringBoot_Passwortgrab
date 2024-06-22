@@ -27,6 +27,8 @@ public class DemoDatenImporter implements ApplicationRunner {
 
     private final static Logger LOG = LoggerFactory.getLogger( DemoDatenImporter.class );
 
+ 
+   
     /** Repo-Bean für Zugriff auf Tabelle mit Passwörtern. */
     @Autowired
     private PasswortRepo _passwortRepo;
@@ -52,19 +54,28 @@ public class DemoDatenImporter implements ApplicationRunner {
         } else {
 
             LOG.info( "Noch keine Passwörter in der Datenbank, importiere Demo-Daten." );
+                        
+            NutzernamePasswort np1 = erzeugePasswortNutzername( "admin"        , "geheim-123" );
+            NutzernamePasswort np2 = erzeugePasswortNutzername( "test-nutzer-1", "secret-789" );
 
-            NutzernamePasswort np1 = new NutzernamePasswort( _aes.erzeugeZufaelligenIV(), "support-user", "geheim123" );
-            NutzernamePasswort np2 = new NutzernamePasswort( _aes.erzeugeZufaelligenIV(), "test-123"    , "secret789" );
+            int zaehler = 0;
+            
+            PasswortEntity p1 = new PasswortEntity( "Testnutzer für Fileserver 123", np1, erzeugeGueltigBis( 10*24 ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
+            PasswortEntity p2 = new PasswortEntity( "Testnutzer für Fileserver 234", np2, erzeugeGueltigBis( 48    ), "Von Datenimporter angelegt, Nr. " + ++zaehler );
 
-            PasswortEntity p1 = new PasswortEntity( "Testnutzer für Fileserver 123", np1, erzeugeGueltigBis( 10*24 ), "Von Datenimporter angelegt" );
-            PasswortEntity p2 = new PasswortEntity( "Testnutzer für Fileserver 234", np2, erzeugeGueltigBis( 48    ), "Von Datenimporter angelegt" );
-
-            List passwortListe = List.of( p1, p2 );
+            List<PasswortEntity> passwortListe = List.of( p1, p2 );
             _passwortRepo.saveAll( passwortListe );
 
             final long anzahlPasswoerterNeu = _passwortRepo.count();
             LOG.info( "Demo-Daten wurden importiert, es sind jetzt {} Passwörter in der Datenbank.", anzahlPasswoerterNeu );
         }
+    }
+    
+    private NutzernamePasswort erzeugePasswortNutzername( String nutzername, String passwort ) {
+        
+        String iv = _aes.erzeugeZufaelligenIV();
+        
+        return new NutzernamePasswort( iv, nutzername, passwort );
     }
 
 

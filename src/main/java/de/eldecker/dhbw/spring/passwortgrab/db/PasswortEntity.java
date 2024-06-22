@@ -1,7 +1,9 @@
 package de.eldecker.dhbw.spring.passwortgrab.db;
 
 import static jakarta.persistence.GenerationType.AUTO;
+import static java.time.LocalDateTime.now;
 
+import de.eldecker.dhbw.spring.passwortgrab.db.krypto.NutzernamePasswortAttributConverter;
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
 
 import jakarta.persistence.Convert;
@@ -18,12 +20,17 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 
+/**
+ * Ein Objekt dieser Klasse Repräsentiert einen Datensatz in der
+ * Tabelle mit den Passwörtern.
+ */
 @Audited
 @EnableJpaAuditing
 @Entity
 @Table( name = "PASSWOERTER" )
 public class PasswortEntity {
 
+    /** Primärschlüssel. */
     @Id
     @GeneratedValue( strategy = AUTO )
     private Long id;
@@ -40,15 +47,26 @@ public class PasswortEntity {
     @Lob
     private NutzernamePasswort nutzernamePasswort;
 
+    /** Letzter Zeitpunkt, zu dem Passwort noch gültig ist. */
     private LocalDateTime gueltigBis;
 
+    /** Kommentar (optional) */
     @Lob
     private String kommentar;
 
 
+
+
+    /**
+     * Default-Konstruktor für JPA.
+     */
     public PasswortEntity() {
     }
 
+    /**
+     * Konstruktor für die Erzeugung eines neuen Passworts
+     * mit Definierung aller Attribute (bis auf ID).
+     */
     public PasswortEntity( String             titel,
                            NutzernamePasswort nutzernamePasswort,
                            LocalDateTime      gueltigBis,
@@ -109,6 +127,24 @@ public class PasswortEntity {
         this.kommentar = kommentar;
     }
 
+    
+    /**
+     * Hilfsmethode: Gibt zurück, ob das Passwort abgelaufen ist.
+     * 
+     * @return {@code true} wenn das Passwort abgelaufen ist, 
+     *         sonst {@code false}.
+     */
+    public boolean istAbgelaufen() {
+
+        return now().isAfter( gueltigBis );
+    }
+
+    
+    /**
+     * String-Repräsentation des Objekts.
+     * 
+     * @return String mit Titel des Eintrags.
+     */
     @Override
     public String toString() {
 
