@@ -30,7 +30,7 @@ import jakarta.annotation.PostConstruct;
 /**
  * Diese Klasse enthält die Methoden für die Verschlüsselung und Entschlüsselung
  * mit dem symmetrischen Verschlüsselungsalgorithmus "AES" im Betriebsmodus
- * "CBC" (Chiper Block Mode).
+ * "CBC" (Chiper Block Chaining).
  */
 @Service
 public class AesAlgorithmus {

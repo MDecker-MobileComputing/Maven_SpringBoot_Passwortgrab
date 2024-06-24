@@ -66,8 +66,9 @@ public class NutzernamePasswortAttributConverter implements AttributeConverter<N
             String nutzernameKrypt = _aes.verschluesseln( nutzername, iv );
             String passwortKrypt   = _aes.verschluesseln( passwort  , iv );
             
-            nutzernamePasswortVeschluesselt = new NutzernamePasswort( iv, nutzernameKrypt, passwortKrypt ); 
-            
+            nutzernamePasswortVeschluesselt = 
+                    new NutzernamePasswort( iv, nutzernameKrypt, passwortKrypt ); 
+                                                             
             return _objectMapper.writeValueAsString( nutzernamePasswortVeschluesselt );
             
         } catch ( JsonProcessingException | GeneralSecurityException ex ) {

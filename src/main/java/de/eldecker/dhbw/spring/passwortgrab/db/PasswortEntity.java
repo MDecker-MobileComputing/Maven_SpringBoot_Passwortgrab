@@ -4,6 +4,7 @@ import static jakarta.persistence.GenerationType.AUTO;
 import static java.time.LocalDate.now;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import de.eldecker.dhbw.spring.passwortgrab.db.krypto.NutzernamePasswortAttributConverter;
 import de.eldecker.dhbw.spring.passwortgrab.model.NutzernamePasswort;
@@ -50,7 +51,7 @@ public class PasswortEntity {
     /** Letzter Tag, an dem das Passwort noch gültig ist. */
     private LocalDate gueltigBis;
 
-    /** Kommentar (optional) */
+    /** Kommentar (optional), wir auf CLOB abgebildet. */
     @Lob
     private String kommentar;
 
@@ -147,4 +148,45 @@ public class PasswortEntity {
         return "Passwort mit Titel \"" + titel + "\".";
     }
 
+
+    /**
+     * Hashwert für Objekt berechnen.
+     * 
+     * @return Hashwert ("Fingerabdruck") dieses Objekts
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash( titel             ,
+                             gueltigBis        ,
+                             nutzernamePasswort,
+                             kommentar 
+                           );
+    }
+
+    
+    /**
+     * Vergleich aufrufendes Objekt mit {@code obj}.
+     * 
+     * @return {@code true} gdw. {@code obj} auch ein {@link PasswortEntity}-Objekt
+     *         ist und alle Attribute bis auf den Primärschlüssel denselben Wert haben 
+     */
+    @Override
+    public boolean equals( Object obj ) {
+        
+        if ( obj == null ) { return false; }
+        if ( obj == this ) { return true;  }
+        
+        if ( obj instanceof PasswortEntity anderes ) {
+            
+            return Objects.equals( titel             , anderes.titel              ) &&
+                   Objects.equals( gueltigBis        , anderes.gueltigBis         ) &&
+                   Objects.equals( nutzernamePasswort, anderes.nutzernamePasswort ) &&
+                   Objects.equals( kommentar         , anderes.kommentar          );            
+        } else {
+            
+            return false;
+        }
+    }
+        
 }

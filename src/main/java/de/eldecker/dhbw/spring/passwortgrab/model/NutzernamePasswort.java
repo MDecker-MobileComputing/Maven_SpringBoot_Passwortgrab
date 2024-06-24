@@ -2,6 +2,9 @@ package de.eldecker.dhbw.spring.passwortgrab.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import de.eldecker.dhbw.spring.passwortgrab.db.PasswortEntity;
 
 
 /**
@@ -78,6 +81,7 @@ public class NutzernamePasswort {
         _passwort = passwort;
     }
 
+    
     /**
      * Methode zur Berechnung Informationsgehalt von Passwort.
      * <br><br>
@@ -120,6 +124,42 @@ public class NutzernamePasswort {
     public String toString() {
         
         return "Passwort mit Entropie von " +  berechnePasswortEntropie() + " Bits";
+    }
+    
+    
+    /**
+     * Hashwert für Objekt berechnen.
+     * 
+     * @return Hashwert ("Fingerabdruck") dieses Objekts
+     */
+    @Override
+    public int hashCode() {
+
+        return Objects.hash( _iv, _nutzername, _passwort );                                                                                      
+    }
+    
+    
+    /**
+     * Vergleich aufrufendes Objekt mit {@code obj}.
+     * 
+     * @return {@code true} gdw. {@code obj} auch ein {@link NutzernamePasswort}-Objekt
+     *         ist und alle Attribute bis auf den Primärschlüssel denselben Wert haben 
+     */
+    @Override
+    public boolean equals( Object obj ) {
+        
+        if ( obj == null ) { return false; }
+        if ( obj == this ) { return true;  }
+        
+        if ( obj instanceof NutzernamePasswort anderes ) {
+            
+            return Objects.equals( _iv        , anderes._iv         ) && 
+                   Objects.equals( _nutzername, anderes._nutzername ) &&
+                   Objects.equals( _passwort  , anderes._passwort   );            
+        } else {
+            
+            return false;
+        }
     }
 
 }
