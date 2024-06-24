@@ -309,7 +309,8 @@ public class ThymeleafController {
      * 
      * @param id Primärschlüssel des Passworts
      * 
-     * @return Name von Template-Datei {@code passwort-historie.html} ohne Datei-Endung.
+     * @return Name von Template-Datei {@code passwort-historie.html} 
+     *         ohne Datei-Endung.
      */
     @GetMapping( "/passwort-historie/{id}" )
     public String getPasswortHistorie( Model model,
