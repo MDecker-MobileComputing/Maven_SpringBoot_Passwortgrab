@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import de.eldecker.dhbw.spring.passwortgrab.db.PasswortEntity;
-
 
 /**
  * Ein Objekt dieser Klasse enthält einen Nutzernamen und ein Passwort sowie
