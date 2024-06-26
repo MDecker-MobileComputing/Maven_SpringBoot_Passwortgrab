@@ -167,11 +167,21 @@ public class AesAlgorithmus {
         return _base64Encoder.encodeToString( zufallsByteArray );
     }
 
+    
+    /**
+     * Initialsierungsvektor im Base64-Format dekodieren.
+     * 
+     * @param iv Initialisierungsvektor (128 Bit) in Base64-Codierung
+     * 
+     * @return Objekt mit dekodiertem IV für Übergabe an {@code init()}-Methode
+     *         an Objekt für Ver- und Entschlüsselung.
+     */
     private IvParameterSpec decodeInitVektor( String iv ) {
         
         byte[] byteArray = _base64Decoder.decode( iv );
         return new IvParameterSpec( byteArray );
     }
+    
 
     /**
      * Klartext verschlüsseln.
