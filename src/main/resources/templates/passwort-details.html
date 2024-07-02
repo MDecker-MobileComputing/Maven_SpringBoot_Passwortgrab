@@ -4,12 +4,12 @@
     <title>Passwortgrab: Details von Passwort</title>
     <meta charset="utf-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../../passwortgrab_stil.css">  
+    <link rel="stylesheet" type="text/css" href="../../passwortgrab_stil.css">
 </head>
 <body>
 
     <h1>
-        Passwort: 
+        Passwort:
         "<span th:text="${passwortObjekt.titel}"></span>"
     </h1>
 
@@ -17,7 +17,7 @@
         <tr>
             <td class="fett">Nutzername: </td>
             <td>
-                <input id="id-nutzername" class="schrift_monospace" type="text" readonly="readonly" 
+                <input id="id-nutzername" class="schrift_monospace" type="text" readonly="readonly"
                        th:value="${passwortObjekt.getNutzernamePasswort().getNutzername()}">
                 &nbsp;
                 <button id="id-nutzername-zu-passwort">In Zwischenablage kopieren</button>
@@ -26,12 +26,12 @@
         <tr>
             <td class="fett">Passwort: </td>
             <td>
-                <input id="id-passwort" class="schrift_monospace" type="password" readonly="readonly" 
+                <input id="id-passwort" class="schrift_monospace" type="password" readonly="readonly"
                         th:value="${passwortObjekt.getNutzernamePasswort().getPasswort()}">
                 &nbsp;
-                <button id="id-toggleButton">Sichtbarkeit umschalten</button>
-                &nbsp;
                 <button id="id-passwort-zu-clipboard">In Zwischenablage kopieren</button>
+                &nbsp;
+                <button id="id-toggleButton">Sichtbarkeit umschalten</button>
             </td>
         </tr>
         <tr>
@@ -57,14 +57,14 @@
             </td>
         </tr>
     </table>
-    <br><br>    
+    <br><br>
 
     <a th:href="'/app/passwort-aendern/' + ${id}">Ändern</a>
     &nbsp;
     <a th:href="'/app/passwort-historie/' + ${id}">Revisionen</a>
     <br><br>
     <a href="/app/passwort-liste">Zurück zur Liste</a>
-    
+
     <!-- JavaScript als letztes laden -->
     <script src="/passwortgrab.js"></script>
 
