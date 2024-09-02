@@ -8,7 +8,6 @@ let passwortInput = null;
  */
 function togglePasswortSichtbarkeit() {
 
-
     if ( passwortInput.type === "password" ) {
 
         passwortInput.type = "text";
@@ -45,7 +44,7 @@ function kopierePasswortInZwischenablage() {
 /**
  * Event-Handler für Initialisierung nachdem DOM von Seite geladen wurde.
  */
-document.addEventListener( "DOMContentLoaded", function() {    
+document.addEventListener( "DOMContentLoaded", function() {
 
     passwortInput = document.getElementById( "id-passwort" );
     if ( !passwortInput ) {
@@ -56,13 +55,13 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     const toggleButton = document.getElementById( "id-toggleButton" );
     if ( !toggleButton ) {
-            
+
         console.error( "Button-Element mit ID 'id-toggleButton' nicht gefunden" );
         return;
     }
 
     toggleButton.addEventListener( "click", togglePasswortSichtbarkeit );
-    
+
     const passwortToClipboardButton = document.getElementById( "id-passwort-zu-clipboard" );
     if ( !passwortToClipboardButton ) {
 
@@ -80,7 +79,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     const nutzernameToClipboardButton = document.getElementById( "id-nutzername-zu-passwort" );
     if ( !nutzernameToClipboardButton ) {
-            
+
         console.error( "Button-Element mit ID 'id-nutzername-zu-passwort' nicht gefunden" );
         return;
     }
