@@ -12,7 +12,7 @@ zu demonstrieren:
   ["Cipher Block Chaining" (CBC)](https://de.wikipedia.org/wiki/Cipher_Block_Chaining_Mode), 
   also mit Initialisierungsvektor, der unverschlüsselt in der Tabelle für jeden Datensatz abgelegt wird.
   
-* *Spring Data Envers* für Versionierung der Tabelleneinträge
+* *Spring Data Envers* für Versionierung der Tabelleneinträge.
 
 <br>
 
