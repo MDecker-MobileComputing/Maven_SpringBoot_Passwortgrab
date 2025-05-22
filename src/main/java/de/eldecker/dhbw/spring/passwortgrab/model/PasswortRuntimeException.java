@@ -12,6 +12,7 @@ public class PasswortRuntimeException extends RuntimeException {
      * und ursprünglicher Exception zu erzeugen. 
      * 
      * @param fehlermeldung Beschreibung Fehler
+     * 
      * @param ex Ursprüngliche Exception
      */
     public PasswortRuntimeException( String fehlermeldung,
